@@ -9,7 +9,7 @@ description 'Vorp billing system'
 
 shared_scripts { 'config.lua', 'languages/translations.lua' }
 client_script 'client/main.lua'
-server_scripts { 'server/main.lua', 'languages/logs.lua' }
+server_scripts { 'server/main.lua', 'languages/Logs.lua' }
 
 version '0.1'
 vorp_checker 'yes'
