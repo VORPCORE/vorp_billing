@@ -9,7 +9,7 @@ RegisterCommand(Billing.Command, function(source)
     local job <const> = character.job
     local grade <const> = character.jobGrade
 
-    if not Billing.Jobs[job] or Billing.Jobs[job] < grade then
+    if not Billing.Jobs[job] or grade < Billing.Jobs[job] then
         return Core.NotifyObjective(source, T.Notifications.not_allowed_command, 5000)
     end
 
