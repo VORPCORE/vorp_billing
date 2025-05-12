@@ -1,16 +1,26 @@
 local Core <const> = exports.vorp_core:GetCore()
 local T <const> = Translation.Langs[Billing.Lang] -- Load the active language for the server
 
+local function checkJob(source, job, grade)
+    if not Billing.Jobs[job] then
+        return Core.NotifyObjective(source, T.Notifications.not_allowed_command, 5000)
+    end
+
+    if grade < Billing.Jobs[job] then
+        return Core.NotifyObjective(source, T.Notifications.not_allowed_command, 5000)
+    end
+
+    return true
+end
+
 RegisterCommand(Billing.Command, function(source)
     local user <const> = Core.getUser(source)
     if not user then return end
 
     local character <const> = user.getUsedCharacter
-    local job <const> = character.job
-    local grade <const> = character.jobGrade
 
-    if not Billing.Jobs[job] or Billing.Jobs[job] < grade then
-        return Core.NotifyObjective(source, T.Notifications.not_allowed_command, 5000)
+    if not checkJob(source, character.job, character.jobGrad) then
+        return
     end
 
     if not Billing.GetIsOnduty(source) then
@@ -41,11 +51,9 @@ RegisterNetEvent("vorp_billing:server:SendBill", function(data)
     local sourceIdentifier <const> = sourceCharacter.identifier
     local steamname <const>        = GetPlayerName(_source)
 
-    local job <const>              = sourceCharacter.job
-    local jobGrade <const>         = sourceCharacter.jobGrade
 
-    if not Billing.Jobs[job] or Billing.Jobs[job] < jobGrade then
-        return Core.NotifyObjective(_source, T.Notifications.not_allowed_bill, 5000)
+    if not checkJob(source, sourceCharacter.job, sourceCharacter.jobGrade) then
+        return
     end
 
     if data.playerId == _source then
