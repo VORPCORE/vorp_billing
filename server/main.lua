@@ -19,7 +19,7 @@ RegisterCommand(Billing.Command, function(source)
 
     local character <const> = user.getUsedCharacter
 
-    if not checkJob(source, character.job, character.jobGrad) then
+    if not checkJob(source, character.job, character.jobGrade) then
         return
     end
 
