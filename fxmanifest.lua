@@ -7,7 +7,7 @@ author 'VORP @outsider'
 name 'vorp_billing'
 description 'Vorp billing system'
 
-shared_scripts "@vorp_lib/import.lua"
+shared_script "@vorp_lib/import.lua"
 
 client_script 'client/main.lua'
 
