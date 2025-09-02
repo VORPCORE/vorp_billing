@@ -1,20 +1,24 @@
-local Core <const> = exports.vorp_core:GetCore()
+local Lib <const> = Import({"/config", "/languages/translations","/languages/Logs"})
+local Billing <const> = Lib.Config --[[@as vorp_billing]]
+local Translation <const> = Lib.Translation --[[@as vorp_billing_translation]]
+local Logs <const> = Lib.Logs
+
 local T <const> = Translation.Langs[Billing.Lang] -- Load the active language for the server
 
 local function checkJob(source, job, grade)
     if not Billing.Jobs[job] then
-        return Core.NotifyObjective(source, T.Notifications.not_allowed_command, 5000)
+        return LIB.NOTIFY:Objective(source, T.Notifications.not_allowed_command, 5000)
     end
 
     if grade < Billing.Jobs[job] then
-        return Core.NotifyObjective(source, T.Notifications.not_allowed_command, 5000)
+        return LIB.NOTIFY:Objective(source, T.Notifications.not_allowed_command, 5000)
     end
 
     return true
 end
 
 RegisterCommand(Billing.Command, function(source)
-    local user <const> = Core.getUser(source)
+    local user <const> = LIB.CORE.getUser(source)
     if not user then return end
 
     local character <const> = user.getUsedCharacter
@@ -24,7 +28,7 @@ RegisterCommand(Billing.Command, function(source)
     end
 
     if not Billing.GetIsOnduty(source) then
-        return Core.NotifyObjective(source, T.Notifications.not_on_duty, 5000)
+        return LIB.NOTIFY:Objective(source, T.Notifications.not_on_duty, 5000)
     end
 
     TriggerClientEvent("vorp_billing:client:openMenu", source)
@@ -43,7 +47,7 @@ end)
 -- we need an event to register the bill
 RegisterNetEvent("vorp_billing:server:SendBill", function(data)
     local _source <const> = source
-    local user <const> = Core.getUser(_source)
+    local user <const> = LIB.CORE.getUser(_source)
     if not user then return end
 
     local sourceCharacter <const>  = user.getUsedCharacter
@@ -57,30 +61,30 @@ RegisterNetEvent("vorp_billing:server:SendBill", function(data)
     end
 
     if data.playerId == _source then
-        return Core.NotifyObjective(_source, T.Notifications.self_billing_error, 5000)
+        return LIB.NOTIFY:Objective(_source, T.Notifications.self_billing_error, 5000)
     end
 
-    local target <const> = Core.getUser(data.playerId)
+    local target <const> = LIB.CORE.getUser(data.playerId)
     if not target then
-        return Core.NotifyObjective(_source, T.Notifications.target_not_found, 5000)
+        return LIB.NOTIFY:Objective(_source, T.Notifications.target_not_found, 5000)
     end
 
     local distance = #(GetEntityCoords(GetPlayerPed(_source)) - GetEntityCoords(GetPlayerPed(data.playerId)))
     if distance > 5.0 then
-        return Core.NotifyObjective(_source, T.Notifications.target_too_far, 5000)
+        return LIB.NOTIFY:Objective(_source, T.Notifications.target_too_far, 5000)
     end
 
     if data.amount > Billing.MaxBillAmount then
-        return Core.NotifyObjective(_source, T.Notifications.max_bill_exceeded .. Billing.MaxBillAmount, 5000)
+        return LIB.NOTIFY:Objective(_source, T.Notifications.max_bill_exceeded .. Billing.MaxBillAmount, 5000)
     end
 
     if Billing.AllowBillingNegative then
         target.getUsedCharacter.addCurrency(0, -data.amount)
-        Core.NotifyObjective(_source, T.Notifications.bill_successful .. " " .. target.getUsedCharacter.firstname .. " " .. target.getUsedCharacter.lastname .. " " .. T.Notifications.For .. " " .. data.amount, 5000)
-        Core.NotifyObjective(data.playerId, T.Notifications.bill_received .. data.amount .. " " .. T.ReceiptInfo.billed_by .. " " .. charname .. " " .. T.Notifications.For .. " " .. data.reason, 5000)
+        LIB.NOTIFY:Objective(_source, T.Notifications.bill_successful .. " " .. target.getUsedCharacter.firstname .. " " .. target.getUsedCharacter.lastname .. " " .. T.Notifications.For .. " " .. data.amount, 5000)
+        LIB.NOTIFY:Objective(data.playerId, T.Notifications.bill_received .. data.amount .. " " .. T.ReceiptInfo.billed_by .. " " .. charname .. " " .. T.Notifications.For .. " " .. data.reason, 5000)
     else
         if target.getUsedCharacter.money < data.amount then
-            return Core.NotifyObjective(_source, T.Notifications.insufficient_funds, 5000)
+            return LIB.NOTIFY:Objective(_source, T.Notifications.insufficient_funds, 5000)
         end
         target.getUsedCharacter.addCurrency(0, -data.amount)
     end
@@ -119,5 +123,5 @@ RegisterNetEvent("vorp_billing:server:SendBill", function(data)
         "**" .. Logs.Lang.TargetSteam .. "** " .. targetSteamname .. "\n" ..
         "**" .. Logs.Lang.TargetID .. "** " .. targetIdentifier
 
-    Core.AddWebhook(Logs.Lang.BillSent, Logs.Webhook, description, Logs.color, Logs.Namelogs, Logs.logo, Logs.footerlogo, Logs.avatar)
+    LIB.CORE.AddWebhook(Logs.Lang.BillSent, Logs.Webhook, description, Logs.color, Logs.Namelogs, Logs.logo, Logs.footerlogo, Logs.avatar)
 end)

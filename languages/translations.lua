@@ -1,4 +1,5 @@
-Translation = {}
+---@class vorp_billing_translation
+local Translation = {}
 
 Translation.Langs = {
     English = {
@@ -46,4 +47,8 @@ Translation.Langs = {
         }
     },
     -- Additional languages can be added here with the same structure.
+}
+
+return {
+    Translation = Translation
 }

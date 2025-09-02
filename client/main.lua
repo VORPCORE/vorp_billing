@@ -1,5 +1,8 @@
+local Lib <const> = Import({ "/config", "/languages/translations" })
+local Billing <const> = Lib.Config --[[@as vorp_billing]]
+local Translation <const> = Lib.Translation --[[@as vorp_billing_translation]]
+
 local MenuData <const> = exports.vorp_menu:GetMenuData()
-local Core <const> = exports.vorp_core:GetCore()
 local T <const> = Translation.Langs[Billing.Lang]
 
 RegisterNetEvent("vorp_billing:client:openMenu", function()
@@ -46,7 +49,7 @@ function OpenBillingMenu()
     }, function(data, menu)
         if data.current.value == "confirm" then
             if playerId <= 0 or reason == "" or amount <= 0 then
-                return Core.NotifyObjective(T.Notifications.fill_all_fields, 5000)
+                return LIB.NOTIFY:Objective(T.Notifications.fill_all_fields, 5000)
             end
 
             menu.close()
@@ -68,7 +71,7 @@ function OpenBillingMenu()
         if not result then return end
 
         if data.current.value == "playerId" and tonumber(result) > 0 then
-            menu.setElement(1, "label", T.MenuLabels.player_id .. "<br><b> "..T.InputInfo.Added .. result)
+            menu.setElement(1, "label", T.MenuLabels.player_id .. "<br><b> " .. T.InputInfo.Added .. result)
             menu.setElement(1, "desc", T.MenuLabels.player_id_desc)
             menu.refresh()
             playerId = tonumber(result)
@@ -83,14 +86,14 @@ function OpenBillingMenu()
 
         if data.current.value == "amount" and tonumber(result) > 0 then
             if tonumber(result) > Billing.MaxBillAmount then
-                return Core.NotifyObjective(T.Notifications.max_bill_exceeded .. Billing.MaxBillAmount, 5000)
+                return LIB.NOTIFY:Objective(T.Notifications.max_bill_exceeded .. Billing.MaxBillAmount, 5000)
             end
             menu.setElement(3, "label", T.MenuLabels.bill_amount .. "<br> " .. T.Notifications.bill_received .. "$" .. result)
             menu.setElement(3, "desc", T.MenuLabels.amount_desc)
             menu.refresh()
             amount = tonumber(result)
         end
-    end, function(data, menu)
+    end, function(_, menu)
         menu.close()
     end)
 end

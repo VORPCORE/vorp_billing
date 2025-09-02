@@ -1,5 +1,4 @@
-Logs = {
-
+local Logs = {
     Webhook    = "",          -- add webhook for all other Police logs URL here
     Namelogs   = "Billing",
     color      = 16711680,    -- color for webhook embeds, defaults to VORP core config if not set
@@ -19,4 +18,8 @@ Logs = {
         TargetID     = "Billed Player Identifier: "
 
     }
+}
+
+return {
+    Logs = Logs
 }
