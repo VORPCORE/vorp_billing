@@ -1,5 +1,5 @@
 local Lib <const> = Import({"/config", "/languages/translations","/languages/Logs"})
-local Billing <const> = Lib.Config --[[@as vorp_billing]]
+local Billing <const> = Lib.Billing --[[@as vorp_billing]]
 local Translation <const> = Lib.Translation --[[@as vorp_billing_translation]]
 local Logs <const> = Lib.Logs
 
