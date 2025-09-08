@@ -1,5 +1,5 @@
 local Lib <const> = Import({ "/config", "/languages/translations" })
-local Billing <const> = Lib.Config --[[@as vorp_billing]]
+local Billing <const> = Lib.Billing--[[@as vorp_billing]]
 local Translation <const> = Lib.Translation --[[@as vorp_billing_translation]]
 
 local MenuData <const> = exports.vorp_menu:GetMenuData()
