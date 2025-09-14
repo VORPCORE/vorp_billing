@@ -1,7 +1,8 @@
 local Lib <const> = Import({ "/config", "/languages/translations" })
-local Billing <const> = Lib.Billing--[[@as vorp_billing]]
+local Billing <const> = Lib.Billing --[[@as vorp_billing]]
 local Translation <const> = Lib.Translation --[[@as vorp_billing_translation]]
 
+local Core <const> = exports.vorp_core:GetCore()
 local MenuData <const> = exports.vorp_menu:GetMenuData()
 local T <const> = Translation.Langs[Billing.Lang]
 
@@ -49,7 +50,7 @@ function OpenBillingMenu()
     }, function(data, menu)
         if data.current.value == "confirm" then
             if playerId <= 0 or reason == "" or amount <= 0 then
-                return LIB.NOTIFY:Objective(T.Notifications.fill_all_fields, 5000)
+                return Core.NotifyObjective(T.Notifications.fill_all_fields, 5000)
             end
 
             menu.close()
@@ -86,7 +87,7 @@ function OpenBillingMenu()
 
         if data.current.value == "amount" and tonumber(result) > 0 then
             if tonumber(result) > Billing.MaxBillAmount then
-                return LIB.NOTIFY:Objective(T.Notifications.max_bill_exceeded .. Billing.MaxBillAmount, 5000)
+                return Core.NotifyObjective(T.Notifications.max_bill_exceeded .. Billing.MaxBillAmount, 5000)
             end
             menu.setElement(3, "label", T.MenuLabels.bill_amount .. "<br> " .. T.Notifications.bill_received .. "$" .. result)
             menu.setElement(3, "desc", T.MenuLabels.amount_desc)
